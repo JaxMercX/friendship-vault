@@ -6,38 +6,72 @@
     <title>The Stories Behind the Lens</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;500&display=swap');
-        body { background-color: #f4f1ea; font-family: 'Quicksand', sans-serif; margin: 0; padding: 0; color: #333; }
-        header { text-align: center; padding: 50px 20px; background: #fff; border-bottom: 2px dashed #d1ccc0; }
+        
+        body { background-color: #f4f1ea; font-family: 'Quicksand', sans-serif; margin: 0; padding: 0; color: #333; overflow-x: hidden; }
+        
+        /* Splash Screen */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background-color: #fff; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+            transition: opacity 0.8s ease;
+        }
+
+        #splash-screen h1 { font-family: 'Dancing Script', cursive; font-size: 3rem; color: #8e7dbe; margin-bottom: 20px; text-align: center; padding: 0 20px; }
+
+        .open-btn {
+            background-color: #ff758c; color: white; border: none;
+            padding: 15px 40px; font-size: 1.2rem; border-radius: 50px;
+            cursor: pointer; font-family: 'Quicksand', sans-serif;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.4);
+            transition: transform 0.3s ease;
+        }
+        .open-btn:hover { transform: scale(1.1); }
+
+        /* Main Content */
+        .main-content { opacity: 0; display: none; transition: opacity 1s ease; }
+        .show-content { opacity: 1; display: block; }
+
+        header { text-align: center; padding: 60px 20px; background: #fff; border-bottom: 2px dashed #d1ccc0; }
         header h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; margin: 0; color: #8e7dbe; }
+        
         .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
         .memory-entry { background: white; margin-bottom: 60px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; border-radius: 4px; }
+        
         .photo-frame { width: 100%; max-width: 600px; border: 15px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 25px; }
-        .photo-frame img { width: 100%; display: block; border-radius: 2px; }
+        .photo-frame img { width: 100%; display: block; }
+
         .story-content { text-align: center; max-width: 700px; }
-        .story-content h2 { font-family: 'Dancing Script', cursive; font-size: 2rem; color: #ff758c; margin-bottom: 10px; }
-        .story-content p { line-height: 1.6; font-size: 1.1rem; color: #555; white-space: pre-wrap; }
-        .date-stamp { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-top: 15px; }
-        footer { text-align: center; padding: 40px; color: #999; }
+        .story-content h2 { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: #ff758c; margin-bottom: 15px; }
+        .story-content p { line-height: 1.8; font-size: 1.1rem; color: #555; white-space: pre-wrap; text-align: justify; }
+        
+        .date-stamp { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #bbb; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; width: 100%; }
+        footer { text-align: center; padding: 60px; color: #999; font-style: italic; }
+
+        canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10000; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Memories of Us</h1>
-    <p>Every picture tells a story we'll always keep.</p>
-</header>
+<canvas id="confetti-canvas"></canvas>
 
-<div class="container">
+<div id="splash-screen">
+    <h1>To my dear friend, Lai...</h1>
+    <button class="open-btn" onclick="revealMemories()">Open Our Memories</button>
+</div>
 
-    <div class="memory-entry">
-        <div class="photo-frame">
-            <img src="photo1.jpg" alt="The OG Friend">
-        </div>
-        <div class="story-content">
-            <h2>The OG Friend</h2>
-            <p>Angie and You
+<div class="main-content" id="content">
+    <header>
+        <h1>Memories of Us</h1>
+        <p>Every picture tells a story we'll always keep.</p>
+    </header>
 
-Angie and you. Mao gyud na ang sugod sa tanan. Sa una, maulawon kaayo ko ato nga time. Murag formal pa kaayo ko nimo, hesitant pa ko makigstorya ug maayo. Murag ga-think pa ko unsaon pag approach nimo, basin ma awkward ba or unsa. Haha.
+    <div class="container">
+        <div class="memory-entry">
+            <div class="photo-frame"><img src="photo1.jpg"></div>
+            <div class="story-content">
+                <h2>The OG Friend</h2>
+                <p>Angie and You. Mao gyud na ang sugod sa tanan. Sa una, maulawon kaayo ko ato nga time. Murag formal pa kaayo ko nimo, hesitant pa ko makigstorya ug maayo. Murag ga-think pa ko unsaon pag approach nimo, basin ma awkward ba or unsa. Haha.
 
 Pero kadtong time nga nagka storya ta og tarong, didto na nagsugod tanan. Gamay ra unta to nga moment, pero didto diay magsugod ang usa ka friendship nga hangtod karon akong gi treasure.
 
@@ -45,39 +79,29 @@ Sa una simple ra kaayo—mga small talks, mga katawa nga murag random ra. Pero h
 
 Daghan na pud ta og naagian nga moments—naay lingaw, naay seryoso, naay mga time nga magkatawa ra ta og kalit. Pero bisan unsa pa na, nindot lang hunahunaon nga gikan sa usa ka awkward nga sugod, nahimong usa ka friendship nga strong ug tinuod.
 
-Hangtod karon, thankful gihapon ko ato nga first moment nga nag storya ta. Kay kung wala to, basin wala pud ning friendship nga akong gi value ug gi treasure karon.
-
 OG friend gyud ka nako, lai. 💛</p>
-            <div class="date-stamp">November 2024</div>
+                <div class="date-stamp">November 2024</div>
+            </div>
         </div>
-    </div>
 
-    <div class="memory-entry">
-        <div class="photo-frame">
-            <img src="photo2.jpg" alt="Laughter">
-        </div>
-        <div class="story-content">
-            <h2>Laughter in the Moment and hubog hubog</h2>
-            <p>Lai, kani nga picture lain nasad ni nga storya nga akong mahinumduman.
-
-Kani nga time, hubog sad kaayo ko ato. Broken kaayo ko ug murag lost gyud ko ato nga panahon. Daghan kaayo kog gihuna-huna ug murag wala koy klaro nga direction ato nga time.
+        <div class="memory-entry">
+            <div class="photo-frame"><img src="photo2.jpg"></div>
+            <div class="story-content">
+                <h2>Laughter and Hubog Hubog</h2>
+                <p>Lai, kani nga picture lain nasad ni nga storya nga akong mahinumduman. Kani nga time, hubog sad kaayo ko ato. Broken kaayo ko ug murag lost gyud ko ato nga panahon. Daghan kaayo kog gihuna-huna ug murag wala koy klaro nga direction ato nga time.
 
 Pero bisan ana ko ka gubot ato nga adlaw, naa gihapon mo sa akong kilid—ikaw ug si Angie. Wala mo nangbiya, wala mo nang judge nako bisan kahibaw mo nga wala gyud ko sa akong best ato nga time. Naa lang mo diha, nag bantay ug nag support.
 
-Mao nang karon, kung makahinumdom ko ato nga moment, ma realize gyud nako unsa ka importante ninyo sa akong life. Dili lang mo friends… murag family na gyud.
-
-I know I owe you a lot. Usahay magkatawa nalang ko mag think ana, pero tinuod gyud nga dako kaayo kog pasalamat ninyo. I really value you, lai..</p>
-            <div class="date-stamp">Something 2024</div>
+Mao nang karon, kung makahinumdom ko ato nga moment, ma realize gyud nako unsa ka importante ninyo sa akong life. Dili lang mo friends… murag family na gyud. I really value you, lai.</p>
+                <div class="date-stamp">Something 2024</div>
+            </div>
         </div>
-    </div>
 
-    <div class="memory-entry">
-        <div class="photo-frame">
-            <img src="photo3.jpg" alt="Team Work">
-        </div>
-        <div class="story-content">
-            <h2>Until we are now official CT as Data quality analyst</h2>
-            <p>Mao ni tong time nga gi-push gyud nako nga maka-uban ka sa team. Gi pangusgan gyud nako kay dili gyud ko ganahan nga ma morning shift ka oi—duh! Haha. Gusto gyud nako nga mag team mates ta ato nga time. Simple ra unta siya para sa uban, pero para nako meaningful kaayo kay mas lingaw ug mas okay kung mag uban ta sa work.
+        <div class="memory-entry">
+            <div class="photo-frame"><img src="photo3.jpg"></div>
+            <div class="story-content">
+                <h2>Until we are now official CT</h2>
+                <p>Mao ni tong time nga gi-push gyud nako nga maka-uban ka sa team. Gi pangusgan gyud nako kay dili gyud ko ganahan nga ma morning shift ka oi—duh! Haha. Gusto gyud nako nga mag team mates ta ato nga time. Simple ra unta siya para sa uban, pero para nako meaningful kaayo kay mas lingaw ug mas okay kung mag uban ta sa work.
 
 Until the time nga ako na ang mo hawa ug mo resign, daghan pud kog nahuna-hunaan. Lai, sorry gyud kung nag leave ko. Kabalo ko nga usahay basolon nasad ka sa workload nimo—pareha atong time nga naa pa ka sa pyramid, murag ikaw nasad ang ma pressure pero dont worry the adrien knows na sa mga ka bulshitan nila hihihi. Pero bantay lang gihapon ha, ayaw pa-da ana.
 
@@ -85,39 +109,52 @@ Sorry pud kung usahay off kaayo ko or dili ko kaayo okay. Kabalo ko usahay lisod
 
 And by the way lai, usahay murag feel nako nga wala ka or layo ka, pero dili na problema para nako. Kay like I always say, I treasure you a lot. Kabalo ko sa imong pagka-tao, and I know you well.
 
-Thank you kaayo lai sa tanang guidance ug tambag. Dako kaayo na ug tabang sa akoa. Pareha ra ta—kung magkinaunsa, tawagi lang ko. Kung dili ka okay, ayaw kaulaw mo reach out.
-
-Ayaw pa-da anang mga thoughts nga makapabug-at sa imoha. I see so much potential in you. Dili pa dinhi mahuman ang imong story—daghan pa kaayo ka ma achieve sa life.
-
-Basta kabalo lang ka, naa ra gihapon ko diri. Dili ko mag bag-o.
-
-Friend will always be a friend. 🙂</p>
-            <div class="date-stamp">March 2026</div>
+Thank you kaayo lai sa tanang guidance ug tambag. Dako kaayo na ug tabang sa akoa. Pareha ra ta—kung magkinaunsa, tawagi lang ko. Kung dili ka okay, ayaw kaulaw mo reach out. 🙂</p>
+                <div class="date-stamp">March 2026</div>
+            </div>
         </div>
-    </div>
 
-    <div class="memory-entry">
-        <div class="photo-frame">
-            <img src="photo4.jpg" alt="Spotlight: Glaiza">
-        </div>
-        <div class="story-content">
-            <h2>Spotlight: Glaiza</h2>
-            <p>Basta lai ha, be a strong person. Ayaw pa-da anang depression, sa kagool ug kasubo sa life. Always remember nga naa ra mi permi. If you ever feel alone, just call me or message me. Ayaw pag huna-huna ug mga bad things, okay?
+        <div class="memory-entry">
+            <div class="photo-frame"><img src="photo4.jpg"></div>
+            <div class="story-content">
+                <h2>Spotlight: Glaiza</h2>
+                <p>Basta lai ha, be a strong person. Ayaw pa-da anang depression, sa kagool ug kasubo sa life. Always remember nga naa ra mi permi. If you ever feel alone, just call me or message me. Ayaw pag huna-huna ug mga bad things, okay?
 
-Kabalo ko nga daghan pa kaayong fun ug good moments nga moabot sa atong journey. Daghan pa ta ma experience ug ma achieve.
-
-And if ever naa koy makita nga opportunity ahead, ako gyud ka pahibaw-on.
+Kabalo ko nga daghan pa kaayong fun ug good moments nga moabot sa atong journey. Daghan pa ta ma experience ug ma achieve. And if ever naa koy makita nga opportunity ahead, ako gyud ka pahibaw-on.
 
 Basta lai, padayon lang. Naa ra ko permi. 🙂</p>
-            <div class="date-stamp">June 2026</div>
+                <div class="date-stamp">June 2026</div>
+            </div>
         </div>
     </div>
 
+    <footer>
+        <p>Always and Forever &hearts;</p>
+    </footer>
 </div>
 
-<footer>
-    <p>Always and Forever &hearts;</p>
-</footer>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+    function revealMemories() {
+        const splash = document.getElementById('splash-screen');
+        splash.style.opacity = '0';
+        
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#ff758c', '#8e7dbe', '#f4f1ea']
+        });
+
+        setTimeout(() => {
+            splash.style.display = 'none';
+            const content = document.getElementById('content');
+            content.style.display = 'block';
+            setTimeout(() => { content.classList.add('show-content'); }, 10);
+            window.scrollTo(0, 0);
+        }, 800);
+    }
+</script>
 
 </body>
 </html>
